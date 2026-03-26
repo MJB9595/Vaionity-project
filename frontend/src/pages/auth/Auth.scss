@@ -1,0 +1,47 @@
+@use "@/styles/variables" as *;
+
+.auth {
+    height: 100vh;
+
+    .inner {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+
+        .auth-box {
+            // flex: 1;
+            width: 100%;
+
+            nav {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+        }
+
+        .auth-form {
+            margin: $space-lg 0;
+            width: 100%;
+
+            .input-group {
+                padding: $space-sm 0;
+            }
+
+            .auth-btn-wrap {
+                margin-top: $space-lg;
+            }
+        }
+
+        .auth-now {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: $space-md;
+
+            span {
+                color: $muted;
+            }
+        }
+    }
+}

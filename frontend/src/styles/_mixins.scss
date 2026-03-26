@@ -1,0 +1,30 @@
+@use "./variables" as *;
+
+@mixin container {
+  width: min(100% - 40px, #{$container-lg});
+  margin-inline: auto;
+}
+
+@mixin glass {
+  background: $card;
+  border: 1px solid $line;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: $shadow;
+}
+
+@mixin hoverLift {
+  transition: transform 180ms ease, border-color 180ms ease, background 250ms ease, box-shadow .3s ease-in-out;
+  &:hover {
+    transform: translateY(-2px);
+    border-color:#d395ff;
+    box-shadow: 0 0 20px #A22DF7;
+    background-color: #1E0044;
+  }
+}
+
+@mixin mobile {
+  @media (max-width: 768px) {
+    @content;
+  }
+}
