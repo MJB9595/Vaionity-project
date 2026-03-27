@@ -1,3 +1,2 @@
-# VAIONITY
-경복대학교 VAIONITY fullstack 개발 레포지토리입니다
-
+# 2-picstory
+경복대학교 picstory fullstack 수업 자료 입니다.
