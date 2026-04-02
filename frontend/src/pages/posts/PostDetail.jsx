@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { getPostById, deletePost } from '@/api/post.api'
-import PostTag from '@/components/posts/PostTag' // PostTag 불러오기
+import PostTag from '@/components/posts/PostTag' 
 import './PostPagesAll.scss'
 
 const CATEGORY_LIST = [
@@ -63,13 +63,7 @@ const PostDetail = () => {
         
         <div className="hero-section">
           <div className="title-area">
-            {/* 기존 PostTag 컴포넌트 사용 */}
-            <div className="tags" style={{ marginBottom: '16px' }}>
-              {(post.tags || []).map((tag, i) => (
-                <PostTag key={i} tag={tag} />
-              ))}
-            </div>
-            
+            {/* 상단에 있던 태그 표시를 아래 본문 영역으로 이동했습니다 */}
             <h2 className="hero-title">{post.title}</h2>
             <p className="hero-subtitle">The Footprint of VAIO</p>
           </div>
@@ -91,6 +85,18 @@ const PostDetail = () => {
           </aside>
 
           <main className="main-content">
+            
+            {/* 요청하신 포스트 태그 섹션 (Dashboard와 동일한 스타일 적용) */}
+            <div className="tag-section" style={{ marginBottom: '40px' }}>
+              <h4 className="section-title">포스트 태그</h4>
+              <div className="tags" style={{ marginBottom: 0 }}>
+                <span>#tag:</span>
+                {(post.tags || []).map((tag, i) => (
+                  <PostTag key={i} tag={tag} />
+                ))}
+              </div>
+            </div>
+
             <div className="detail-hero-image">
               <img src={post.imageUrl || "/images/placeholder.png"} alt={post.title} />
             </div>

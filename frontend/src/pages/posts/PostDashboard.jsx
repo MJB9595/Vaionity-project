@@ -5,6 +5,7 @@ import PostList from '@/components/posts/PostList'
 import TagFilterBar from '@/components/posts/TagFilterBar'
 import Input from '@/components/ui/Input'
 import './PostPagesAll.scss'
+import useFilteredPosts from '../../hooks/useFilterdPosts'
 
 const CATEGORY_LIST = [
   '플래그십 시리즈 Z',
@@ -52,21 +53,10 @@ const PostDashboard = () => {
     }
     fetchPosts()
   }, [])
-
-  const filteredByTag = selectedTag === '전체'
-    ? posts
-    : posts.filter((post) => post.tags.includes(selectedTag))
-
-  const filteredPosts = filteredByTag.filter((post) => {
-    const keyword = searchKeyword.toLowerCase().trim()
-    if (!keyword) return true
-    return (
-      post.title.toLowerCase().includes(keyword) ||
-      post.content.toLowerCase().includes(keyword)
-    )
-  })
+  const filteredPosts = useFilteredPosts(posts,selectedTag,searchKeyword)
 
   const handleCreatePost = () => {
+    console.log('새 메모 작성')
     navigate('/app/posts/new')
   }
 
@@ -111,7 +101,7 @@ const PostDashboard = () => {
               <TagFilterBar tags={tags} selectedTag={selectedTag} onChangeTag={setSelectedTag} />
             </div>
             
-            <PostList posts={filteredPosts} />
+            <PostList posts={filteredPosts.slice(0,3)} />
           </main>
         </div>
       </div>

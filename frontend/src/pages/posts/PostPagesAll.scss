@@ -55,6 +55,7 @@
           padding: 10px 20px;
           width: 250px;
           outline: none;
+          color: $gray-800;
           &:focus { border-color: #1A0A2E; }
         }
       }
@@ -143,6 +144,73 @@
           text-decoration: underline;
           &.text-danger { color: #d32f2f; }
         }
+      }
+    }
+  }
+}
+
+.pagination-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 60px; /* 리스트와 간격 띄우기 */
+  gap: 16px;
+
+  .page-nav-btn {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    color: #333;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover:not(:disabled) {
+      border-color: #1A0A2E;
+      color: #1A0A2E;
+      background-color: #f9f9f9;
+    }
+
+    &:disabled {
+      color: #ccc;
+      border-color: #eee;
+      cursor: not-allowed;
+      background-color: #fafafa;
+    }
+  }
+
+  .page-numbers {
+    display: flex;
+    list-style: none;
+    gap: 8px;
+    padding: 0;
+    margin: 0;
+
+    li {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      color: #555;
+      font-weight: 500;
+      transition: all 0.2s;
+
+      &:hover {
+        background-color: #f0f0f0;
+        color: #111;
+      }
+
+      /* 현재 선택된 페이지 스타일 */
+      &.active {
+        background-color: #1A0A2E; /* 메인 테마색 */
+        color: #fff;
+        font-weight: 700;
       }
     }
   }
