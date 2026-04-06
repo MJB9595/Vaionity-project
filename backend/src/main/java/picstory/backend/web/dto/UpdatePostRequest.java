@@ -5,6 +5,7 @@ import picstory.backend.domain.PostCategory;
 public record UpdatePostRequest(
         PostCategory category,
         String title,
-        String content
+        String content,
+        String imageUrl
 ) {
 }

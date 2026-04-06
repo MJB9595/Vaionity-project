@@ -39,6 +39,10 @@ services:
    SPRING_DATASOURCE_USERNAME: ${MYSQL_USER:-cruduser}
    SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD:-crudpass}
    GRADLE_USER_HOME: /root/.gradle
+   AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+   AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+   AWS_REGION: ${AWS_REGION}
+   AWS_S3_BUCKET: ${AWS_S3_BUCKET}
   ports:
    - "8080:8080"
   volumes:
@@ -69,7 +73,6 @@ services:
   volumes:
    - ./frontend:/app
    - /app/node_modules
-
 volumes:
  mysql_data:
  gradle_cache:

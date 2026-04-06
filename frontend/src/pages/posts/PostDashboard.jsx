@@ -5,7 +5,6 @@ import PostList from '@/components/posts/PostList'
 import TagFilterBar from '@/components/posts/TagFilterBar'
 import Input from '@/components/ui/Input'
 import './PostPagesAll.scss'
-import useFilteredPosts from '../../hooks/useFilterdPosts'
 
 const CATEGORY_LIST = [
   '플래그십 시리즈 Z',
@@ -19,8 +18,6 @@ const CATEGORY_LIST = [
 const PostDashboard = () => {
   const [selectedTag, setSelectedTag] = useState('전체')
   const [searchKeyword, setSearchKeyword] = useState('')
-  
-  // 기존 방식대로 초기값을 '전체'로 설정
   const [tags, setTags] = useState(['전체'])
   const [posts, setPosts] = useState([])
   const navigate = useNavigate()
@@ -35,16 +32,15 @@ const PostDashboard = () => {
         
         const mappedPosts = rawPosts.map((post) => ({
           id: post.id,
-          category: post.category || 'NOTE BOOK',
+          category: post.category || 'DAILY',
           title: post.title,
           content: post.content,
-          tags: post.tags || [], // 기존 방식대로 빈 배열 처리
-          thumbnail: post.imageUrl || ''
+          tags: post.tags || [],
+          // 👇 핵심 포인트: 백엔드에서 받아온 imageUrl을 thumbnail 속성에 연결합니다.
+          // imageUrl이 없을 경우를 대비해 null 처리합니다.
+          thumbnail: post.imageUrl || null
         }))
         setPosts(mappedPosts)
-
-        // API에서 받아온 데이터 기반으로 태그 목록 동적 업데이트 로직이 필요하다면 여기에 추가
-        // 예: setTags(['전체', ...new Set(mappedPosts.flatMap(p => p.tags))])
         
       } catch (error) {
         setFetchError(error?.response?.data?.message || error.message || '게시글 조회 실패')
@@ -53,10 +49,21 @@ const PostDashboard = () => {
     }
     fetchPosts()
   }, [])
-  const filteredPosts = useFilteredPosts(posts,selectedTag,searchKeyword)
+
+  const filteredByTag = selectedTag === '전체'
+    ? posts
+    : posts.filter((post) => post.tags.includes(selectedTag))
+
+  const filteredPosts = filteredByTag.filter((post) => {
+    const keyword = searchKeyword.toLowerCase().trim()
+    if (!keyword) return true
+    return (
+      (post.title && post.title.toLowerCase().includes(keyword)) ||
+      (post.content && post.content.toLowerCase().includes(keyword))
+    )
+  })
 
   const handleCreatePost = () => {
-    console.log('새 메모 작성')
     navigate('/app/posts/new')
   }
 
@@ -101,7 +108,7 @@ const PostDashboard = () => {
               <TagFilterBar tags={tags} selectedTag={selectedTag} onChangeTag={setSelectedTag} />
             </div>
             
-            <PostList posts={filteredPosts.slice(0,3)} />
+            <PostList posts={filteredPosts} />
           </main>
         </div>
       </div>

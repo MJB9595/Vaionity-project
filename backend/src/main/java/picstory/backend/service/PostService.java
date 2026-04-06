@@ -51,6 +51,7 @@ public class PostService {
                 request.category(),
                 request.title(),
                 request.content(),
+                request.imageUrl(),
                 member
         );
 
@@ -95,7 +96,7 @@ public class PostService {
             throw new IllegalArgumentException("본인이 작성한 글만 수정 가능");
         }
 
-        post.update(request.category(), request.title(), request.content());
+        post.update(request.category(), request.title(), request.content(), request.imageUrl());
 
         return PostResponse.from(post);
 
