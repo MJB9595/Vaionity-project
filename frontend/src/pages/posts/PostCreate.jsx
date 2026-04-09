@@ -8,6 +8,7 @@ import { CATEGORY_OPTIONS } from '@/constants/category'
 import PostTag from '@/components/posts/PostTag'
 import { createPost } from '@/api/post.api'
 import { uploadImage } from '@/api/file.api'
+import { createTags,deleteTags, getMyTags } from '@/api/tag.api'
 const PostCreate = () => {
 
 
@@ -16,29 +17,96 @@ const PostCreate = () => {
   const [category, setCategory] = useState('DAILY')
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
-  const [tags, setTags] = useState([
-    { label: '기본값' },
-    { label: '추가 태그' }
-  ])
+  const [tags, setTags] = useState([])
   const fileInputRef = useRef(null)
   const [tagInput, setTagInput] = useState('')
   const [isAddingTag, setIsAddingTag] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [imageUrl, setImageUrl] = useState(null)
 
+  const loadMyTags = async()=>{
+    const res = await getMyTags()
+    const list = Array.isArray(res)? res :res?.data?? []
+
+    setTags(
+      list.map((t)=>({
+        id:t.id,
+        label:typeof t ==='string'? t: t.label?? t.name
+      }))
+    )
+
+
+    // console.log(res)
+  }
+
+  useEffect(()=>{
+    loadMyTags().catch((e)=>{
+      console.error(e)
+    })
+  },[])
+
+  const handleAddTag =async()=>{
+    const next = tagInput.trim()
+
+    if(!next) return
+
+    if(tags.some((t)=>t.label ==next)){
+      setTagInput('')
+      return
+    }
+    try {
+      setIsAddingTag(true)
+
+      const created = await createTags(next)
+
+      setTags((prev)=>{
+        if(prev.some((t)=>t.id===created.id || t.label ===created.label)){
+          return prev
+        }
+        return [...prev,{
+          id:created.id,
+          label:created.label
+        }]
+      })
+      setTagInput('')
+    } catch (error) {
+      console.error(error)
+      const message = error?.response?.data?.message || '태그 추가 실패'
+      alert(message)
+    }finally{
+      setIsAddingTag(false)
+    }
+
+  }
+  const handleKenEnter =(e)=>{
+    if(e.key==='Enter'){
+      e.preventDefault()
+      handleAddTag()
+    }
+  }
+  const handleRemoveTag = async(tag)=>{
+    try {
+      await deleteTags(tag.id)
+      setTags((prev)=>prev.filter((t)=>t.id!==tag.id))
+    } catch (error) {
+       console.error(error)
+      const message = error?.response?.data?.message || '태그 삭제 실패'
+      alert(message)
+    }
+  }
 
   const handleUploadImage = async (e) => {
     const file = e.target.files?.[0]
+
     if(!file) return
 
     try {
-      const presigned = await uploadImage(file)
-      // 👇 fileName 대신 fileUrl로 변경! (이게 DB의 imageUrl로 들어가게 됩니다)
-      setImageUrl(presigned.fileUrl)
+       const presigned = await uploadImage(file)
+      setImageUrl(presigned.fileName)
 
     } catch (error) {
       console.error('이미지 업로드 실패',error)
-    } finally {
+    }finally{
       e.target.value=''
     }
   }
@@ -62,7 +130,8 @@ const PostCreate = () => {
         category,
         title,
         content,
-        imageUrl
+        imageUrl,
+        tags:tags.map((t)=>t.label)
       }
 
       const res = await createPost(payload)
@@ -116,16 +185,23 @@ const PostCreate = () => {
             <div className="post-tag-box">
 
               <div className="tags">
-                <PostTag tag="tag1" />
-                <PostTag tag="tag1" />
-                <PostTag tag="tag1" />
-                <PostTag tag="tag1" />
-                <PostTag tag="tag1" />
-                <PostTag tag="tag1" />
-                <PostTag tag="tag1" />
-                <PostTag tag="tag1" />
-                <input type="text" className='post-tag-input' placeholder='tag를 자유롭게 입력하세요' />
-                <Button type="button" text="+ 태그 추가" className="post-tag-add" />
+                  {tags.map((t)=>(
+                    <PostTag 
+                    tag={t.label} 
+                    onClick={()=>handleRemoveTag(t)}
+                    key={t.id}/>
+
+                  ))}
+                <input
+                value={tagInput}
+                onKeyDown={handleKenEnter}
+                onChange={(e)=>setTagInput(e.target.value)}
+                type="text" className='post-tag-input' placeholder='tag를 자유롭게 입력하세요' />
+                <Button 
+                type="button" 
+                text="+ 태그 추가" 
+                onClick={handleAddTag}
+                className="post-tag-add" />
               </div>
             </div>
             <div className="post-field">

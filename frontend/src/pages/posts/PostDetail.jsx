@@ -1,41 +1,32 @@
 import React, { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import Button from '@/components/ui/Button'
 import { getPostById, deletePost } from '@/api/post.api'
-import PostTag from '@/components/posts/PostTag' 
+import PostTag from '@/components/posts/PostTag'
 import './PostPagesAll.scss'
-
-const CATEGORY_LIST = [
-  '플래그십 시리즈 Z',
-  '얇음과 가벼움의 극한',
-  'UMPC',
-  '비즈니스 프리미엄',
-  'Multi-Media',
-  'ETC'
-]
-
+import { useNavigate, useParams } from 'react-router-dom'
+import PostHeader from '@/components/posts/PostHeader'
 const PostDetail = () => {
+
   const { id } = useParams()
   const navigate = useNavigate()
   const [post, setPost] = useState(null)
   const [loading, setLoading] = useState(true)
 
+  const handleGoBack = () => {
+    navigate(-1)
+  }
+
   useEffect(() => {
     const fetchPost = async () => {
       try {
         const data = await getPostById(Number(id))
-        setPost(data)
+
+        console.log(data)
+        setPost({
+          ...data
+        })
       } catch (error) {
         console.error(error)
-        // API 연동 전 테스트용 (추후 삭제)
-        setPost({
-          id,
-          category: 'NOTE BOOK',
-          title: 'VAIO-X505',
-          content: '노트북 시장의 경량화를 선두한 최초의 모델 ...\n\n스펙표 : 당대의 맥북과 비교해보면?\n\n디스플레이',
-          date: '2025-12-12 | 15:23',
-          imageUrl: '/images/detail-placeholder.png',
-          tags: ['VAIO', '맥북 에어의 선구자'] 
-        })
       } finally {
         setLoading(false)
       }
@@ -43,7 +34,7 @@ const PostDetail = () => {
     fetchPost()
   }, [id])
 
-  if (loading) return <div>로딩중...</div>
+  if (loading) return <div>로딩중</div>
   if (!post) return <div>데이터 없음</div>
 
   const handlePostDelete = async () => {
@@ -57,60 +48,55 @@ const PostDetail = () => {
     }
   }
 
+
   return (
-    <section className='page post-detail'>
-      <div className="layout-container">
-        
-        <div className="hero-section">
-          <div className="title-area">
-            {/* 상단에 있던 태그 표시를 아래 본문 영역으로 이동했습니다 */}
-            <h2 className="hero-title">{post.title}</h2>
-            <p className="hero-subtitle">The Footprint of VAIO</p>
-          </div>
-          
-          <div className="action-area detail-actions">
-            <button className="back-btn" onClick={() => navigate(-1)}>← 뒤로가기</button>
-            <span className="post-date">{post.date || '2025-12-12 | 15:23'}</span>
-          </div>
-        </div>
+    <section className='page post-section post-detail'>
+      <div className="inner">
+        <PostHeader
+          title="게시글 보기"
+          showButton
+          onClick={handleGoBack}
+          buttonText="뒤로가기"
+          buttonClass="back bl"
+        />
+        <div className="post-main">
+          <article className='post-card'>
 
-        <div className="content-grid">
-          <aside className="sidebar">
-            <h3 className="sidebar-title">Category</h3>
-            <ul className="category-list">
-              {CATEGORY_LIST.map((cat, idx) => (
-                <li key={idx} className="category-item">{cat}</li>
-              ))}
-            </ul>
-          </aside>
+            <div className="post-card-body">
+              <p className="post-card-category">
+                {post.category}
+              </p>
+              <h4 className="post-card-title">
+                {post.title}
+              </h4>
+              <p className="post-card-content">
+                {post.content}
+              </p>
 
-          <main className="main-content">
-            
-            {/* 요청하신 포스트 태그 섹션 (Dashboard와 동일한 스타일 적용) */}
-            <div className="tag-section" style={{ marginBottom: '40px' }}>
-              <h4 className="section-title">포스트 태그</h4>
-              <div className="tags" style={{ marginBottom: 0 }}>
-                <span>#tag:</span>
-                {(post.tags || []).map((tag, i) => (
-                  <PostTag key={i} tag={tag} />
+              <div className="tags">
+                {(post.tags||[]).map((tag,i)=>(
+
+                <PostTag tag={tag} key={i} />
                 ))}
               </div>
             </div>
+            <div className="img-wrap">
+              <img src={post.imageUrl} alt="image" />
+            </div>
+          </article>
 
-            <div className="detail-hero-image">
-              <img src={post.imageUrl || "/images/placeholder.png"} alt={post.title} />
-            </div>
-            <div className="detail-body">
-              <p style={{ whiteSpace: 'pre-wrap', lineHeight: '2' }}>
-                {post.content}
-              </p>
-            </div>
-            
-            <div className="detail-admin-actions">
-              <button className="text-btn" onClick={() => navigate(`/app/posts/${id}/edit`)}>수정</button>
-              <button className="text-btn text-danger" onClick={handlePostDelete}>삭제</button>
-            </div>
-          </main>
+        </div>
+        <div className="btn-wrap">
+          <Button
+            text="게시글 삭제하기"
+            className="delete bl"
+            onClick={handlePostDelete}
+            icons />
+          <Button
+            text="게시글 수정하기"
+            className="edit bl"
+            onClick={() => { navigate(`/app/posts/${id}/edit`) }}
+            icons />
         </div>
       </div>
     </section>

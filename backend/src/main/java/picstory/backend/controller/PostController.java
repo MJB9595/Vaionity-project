@@ -7,6 +7,7 @@ import picstory.backend.service.PostService;
 import picstory.backend.web.dto.CreatePostRequest;
 import picstory.backend.web.dto.PostResponse;
 import picstory.backend.web.dto.UpdatePostRequest;
+import picstory.backend.web.dto.UpdatePostTagsRequest;
 
 import java.util.List;
 
@@ -48,6 +49,15 @@ public class PostController {
             HttpSession session
     ) {
         postService.delete(id, session);
+    }
+
+    @PatchMapping("/{id}/tags")
+    public PostResponse updateTags(
+            @PathVariable Long id,
+            @RequestBody UpdatePostTagsRequest request,
+            HttpSession session
+    ){
+        return postService.updateTags(id, request, session);
     }
 
 }

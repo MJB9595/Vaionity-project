@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import picstory.backend.service.LoginService;
 import picstory.backend.web.dto.LoginRequest;
 import picstory.backend.web.dto.MemberResponse;
+import picstory.backend.web.dto.UpdateProfileRequest;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,6 +22,11 @@ public class AuthController {
     @GetMapping("/me")
     public MemberResponse memberResponse(HttpSession session){
         return loginService.me(session);
+    }
+
+    @PatchMapping("/me")
+    public MemberResponse updateMe(@RequestBody UpdateProfileRequest request, HttpSession session){
+        return loginService.updateMe(session,request);
     }
 
     @PostMapping("/logout")
