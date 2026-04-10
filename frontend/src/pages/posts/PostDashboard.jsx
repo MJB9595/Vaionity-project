@@ -5,7 +5,7 @@ import { getMyTags } from '@/api/tag.api'
 import PostList from '@/components/posts/PostList'
 import TagFilterBar from '@/components/posts/TagFilterBar'
 import Input from '@/components/ui/Input'
-import { CATEGORY_FILTER_OPTIONS, CATEGORY_LABEL_MAP } from '@/constants/category'
+import { useCategories } from '@/hooks/useCategories'
 import './PostPagesAll.scss'
 
 const PostDashboard = () => {
@@ -14,6 +14,7 @@ const PostDashboard = () => {
   const [selectedTag, setSelectedTag] = useState('전체')
   const [searchKeyword, setSearchKeyword] = useState('')
   const [tags, setTags] = useState(['전체'])
+  const { categories: categoryOptions } = useCategories(true)
   const [posts, setPosts] = useState([])
   const [fetchError, setFetchError] = useState('')
   const navigate = useNavigate()
@@ -76,7 +77,8 @@ const PostDashboard = () => {
       )
     })
 
-  const currentCategoryLabel = CATEGORY_FILTER_OPTIONS.find(c => c.value === selectedCategory)?.label || '전체'
+  const currentCategoryLabel = categoryOptions.find(c => c.value === selectedCategory)?.label || '전체'
+
 
   return (
     <section className='page post-dashboard'>
@@ -107,7 +109,7 @@ const PostDashboard = () => {
           <aside className="sidebar">
             <h3 className="sidebar-title">Category</h3>
             <ul className="category-list">
-              {CATEGORY_FILTER_OPTIONS.map((cat) => (
+              {categoryOptions.map((cat) => (
                 <li
                   key={cat.value}
                   className={`category-item ${selectedCategory === cat.value ? 'active' : ''}`}

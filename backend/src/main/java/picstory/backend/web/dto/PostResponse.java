@@ -1,14 +1,12 @@
 package picstory.backend.web.dto;
 
 import picstory.backend.domain.Post;
-import picstory.backend.domain.PostCategory;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
 public record PostResponse(
         Long id,
-        PostCategory category,
+        String category,       // PostCategory enum → String
         String title,
         String content,
         String imageUrl,
@@ -17,7 +15,6 @@ public record PostResponse(
         String memberName,
         LocalDateTime createdAt
 ) {
-
     public static PostResponse from(Post post) {
         return new PostResponse(
                 post.getId(),
@@ -25,9 +22,7 @@ public record PostResponse(
                 post.getTitle(),
                 post.getContent(),
                 post.getImageUrl(),
-                post.getTags().stream()
-                        .map(tag -> tag.getLabel())
-                        .toList(),
+                post.getTags().stream().map(tag -> tag.getLabel()).toList(),
                 post.getMember().getId(),
                 post.getMember().getName(),
                 post.getCreatedAt()

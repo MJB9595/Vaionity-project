@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getMyTags, createTags, deleteTags } from '@/api/tag.api'
-import { CATEGORY_OPTIONS, CATEGORY_LABEL_MAP } from '@/constants/category'
+import { getCategories, createCategory, deleteCategory } from '@/api/category.api'
 import PagesHeader from '@/components/layouts/PagesHeader'
 import './Manage.scss'
 
@@ -16,7 +16,52 @@ const Manage = () => {
   const [isAddingTag, setIsAddingTag] = useState(false)
 
   // 카테고리 선택 상태 (정보 표시용)
-  const [selectedCategory, setSelectedCategory] = useState(null)
+  const [categories, setCategories] = useState([])
+  const [catInput, setCatInput] = useState('')          // label
+  const [catValueInput, setCatValueInput] = useState('') // value (영문 키)
+  const [catLoading, setCatLoading] = useState(true)
+  const [isAddingCat, setIsAddingCat] = useState(false)
+
+  const loadCategories = async () => {
+    try {
+      setCatLoading(true)
+      const data = await getCategories()
+      setCategories(data)
+    } catch (e) {
+      alert('카테고리를 불러오지 못했습니다.')
+    } finally {
+      setCatLoading(false)
+    }
+  }
+
+  useEffect(() => { loadCategories() }, [])
+
+  const handleAddCategory = async () => {
+    const label = catInput.trim()
+    const value = catValueInput.trim()
+    if (!label || !value) return alert('카테고리 이름과 키(영문)를 모두 입력하세요.')
+    try {
+      setIsAddingCat(true)
+      const created = await createCategory({ value, label })
+      setCategories((prev) => [...prev, created])
+      setCatInput('')
+      setCatValueInput('')
+    } catch (e) {
+      alert(e?.response?.data?.message || '카테고리 추가 실패')
+    } finally {
+      setIsAddingCat(false)
+    }
+  }
+
+  const handleDeleteCategory = async (cat) => {
+    if (!window.confirm(`"${cat.label}" 카테고리를 삭제하시겠습니까?`)) return
+    try {
+      await deleteCategory(cat.id)
+      setCategories((prev) => prev.filter((c) => c.id !== cat.id))
+    } catch (e) {
+      alert(e?.response?.data?.message || '카테고리 삭제 실패')
+    }
+  }
 
   const loadTags = async () => {
     try {
@@ -85,34 +130,56 @@ const Manage = () => {
           <div className="manage-card">
             <div className="manage-card-header">
               <h3>카테고리</h3>
-              <span className="manage-badge">{CATEGORY_OPTIONS.length}개</span>
+              <span className="manage-badge">{categories.length}개</span>
             </div>
-            <p className="manage-desc">카테고리는 게시글 작성 시 선택할 수 있으며, 사이드바에서 필터링됩니다.</p>
+            <p className="manage-desc">카테고리를 추가하거나 삭제할 수 있습니다.</p>
 
-            <ul className="category-manage-list">
-              {CATEGORY_OPTIONS.map((cat) => (
-                <li
-                  key={cat.value}
-                  className={`category-manage-item ${selectedCategory === cat.value ? 'selected' : ''}`}
-                  onClick={() => setSelectedCategory(selectedCategory === cat.value ? null : cat.value)}
-                >
-                  <span className="cat-label">{cat.label}</span>
-                  <span className="cat-value">{cat.value}</span>
-                </li>
-              ))}
-            </ul>
+            <div className="tag-add-row">
+              <input
+                type="text"
+                className="tag-add-input"
+                placeholder="카테고리 이름 (예: 플래그십 시리즈 Z)"
+                value={catInput}
+                onChange={(e) => setCatInput(e.target.value)}
+                disabled={isAddingCat}
+              />
+              <input
+                type="text"
+                className="tag-add-input"
+                placeholder="영문 키 (예: FLAGSHIP_Z)"
+                value={catValueInput}
+                onChange={(e) => setCatValueInput(e.target.value)}
+                disabled={isAddingCat}
+              />
+              <button
+                className="tag-add-btn"
+                onClick={handleAddCategory}
+                disabled={isAddingCat || !catInput.trim() || !catValueInput.trim()}
+              >
+                {isAddingCat ? '추가 중...' : '+ 추가'}
+              </button>
+            </div>
 
-            {selectedCategory && (
-              <div className="category-info-box">
-                <p>선택된 카테고리: <strong>{CATEGORY_LABEL_MAP[selectedCategory]}</strong></p>
-                <p className="info-sub">카테고리는 백엔드 enum과 연결되어 있어 직접 추가/삭제는 지원하지 않습니다.</p>
-                <button
-                  className="go-filter-btn"
-                  onClick={() => navigate(`/app?category=${selectedCategory}`)}
-                >
-                  이 카테고리 게시글 보기 →
-                </button>
-              </div>
+            {catLoading ? (
+              <p className="manage-loading">카테고리를 불러오는 중...</p>
+            ) : (
+              <ul className="tag-manage-list">
+                {categories.map((cat) => (
+                  <li key={cat.id} className="tag-manage-item">
+                    <span className="tag-chip">{cat.label}</span>
+                    <span className="cat-value" style={{ fontSize: '11px', color: '#888', marginLeft: '6px' }}>
+                      {cat.value}
+                    </span>
+                    <button
+                      className="tag-delete-btn"
+                      onClick={() => handleDeleteCategory(cat)}
+                      title="카테고리 삭제"
+                    >
+                      ✕
+                    </button>
+                  </li>
+                ))}
+              </ul>
             )}
           </div>
 

@@ -3,7 +3,7 @@ import './PostCreateEdit.scss'
 import './PostPagesAll.scss'
 import { useNavigate } from 'react-router-dom'
 import Button from '@/components/ui/Button'
-import { CATEGORY_OPTIONS } from '@/constants/category'
+import { useCategories } from '@/hooks/useCategories'
 import PostTag from '@/components/posts/PostTag'
 import { createPost } from '@/api/post.api'
 import { uploadImage } from '@/api/file.api'
@@ -12,7 +12,8 @@ import { createTags, deleteTags, getMyTags } from '@/api/tag.api'
 const PostCreate = () => {
   const navigate = useNavigate()
 
-  const [category, setCategory] = useState('DAILY')
+  const { categories } = useCategories()   
+  const [category, setCategory] = useState('') 
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [tags, setTags] = useState([])
@@ -27,6 +28,12 @@ const PostCreate = () => {
     const list = Array.isArray(res) ? res : res?.data ?? []
     setTags(list.map((t) => ({ id: t.id, label: typeof t === 'string' ? t : t.label ?? t.name })))
   }
+
+  useEffect(() => {
+    if (categories.length > 0 && !category) {
+      setCategory(categories[0].value)
+    }
+  }, [categories])
 
   useEffect(() => {
     loadMyTags().catch((e) => console.error(e))
@@ -112,7 +119,7 @@ const PostCreate = () => {
               <label className='post-label'>카테고리</label>
               <div className="post-input-wrap">
                 <select value={category} onChange={(e) => setCategory(e.target.value)}>
-                  {CATEGORY_OPTIONS.map((opt) => (
+                  {categories.map((opt) => (
                     <option value={opt.value} key={opt.value}>{opt.label}</option>
                   ))}
                 </select>

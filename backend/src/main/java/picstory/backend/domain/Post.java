@@ -18,9 +18,8 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private PostCategory category;
+    @Column(nullable = false, length = 100)
+    private String category;
 
 
     @Column(nullable = false, length = 100)
@@ -52,7 +51,7 @@ public class Post {
     )
     private Set<Tag> tags = new HashSet<>();
 
-    public Post(PostCategory category, String title, String content, String imageUrl, Member member) {
+    public Post(String category, String title, String content, String imageUrl, Member member) {
         this.category = category;
         this.title = title;
         this.content = content;
@@ -62,7 +61,7 @@ public class Post {
         this.updatedAt = LocalDateTime.now();
     }
 
-    public void update(PostCategory category, String title, String content, String imageUrl) {
+    public void update(String category, String title, String content, String imageUrl) {
         this.category = category;
         this.title = title;
         this.content = content;

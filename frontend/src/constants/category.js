@@ -1,21 +1,6 @@
-// 백엔드 PostCategory enum과 일치하는 카테고리 목록
-export const CATEGORY_OPTIONS = [
-  { label: '일상', value: 'DAILY' },
-  { label: '취미', value: 'HOBBY' },
-  { label: '여행', value: 'TRAVEL' },
-  { label: '업무', value: 'WORK' },
-  { label: '공부', value: 'STUDY' },
-  { label: '기타', value: 'ETC' },
-]
-
-// 전체 포함 (필터용)
-export const CATEGORY_FILTER_OPTIONS = [
-  { label: '전체', value: 'ALL' },
-  ...CATEGORY_OPTIONS,
-]
-
-// value -> label 변환용 맵
-export const CATEGORY_LABEL_MAP = CATEGORY_OPTIONS.reduce((acc, opt) => {
-  acc[opt.value] = opt.label
-  return acc
-}, {})
+// 카테고리는 더 이상 하드코딩하지 않습니다.
+// 모든 컴포넌트에서 useCategories() 훅으로 API를 통해 가져옵니다.
+// 하위 호환을 위해 빈 배열만 export합니다.
+export const CATEGORY_OPTIONS = []
+export const CATEGORY_FILTER_OPTIONS = []
+export const CATEGORY_LABEL_MAP = {}
