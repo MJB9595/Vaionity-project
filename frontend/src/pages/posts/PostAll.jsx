@@ -1,23 +1,17 @@
 import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { getPosts } from '@/api/post.api'
+import { getMyTags } from '@/api/tag.api'
 import PostList from '@/components/posts/PostList'
 import TagFilterBar from '@/components/posts/TagFilterBar'
 import Input from '@/components/ui/Input'
 import Button from '@/components/ui/Button'
-import useFilteredPosts from '../../hooks/useFilterdPosts'
+import { CATEGORY_FILTER_OPTIONS, CATEGORY_LABEL_MAP } from '@/constants/category'
 import './PostPagesAll.scss'
 
-const CATEGORY_LIST = [
-  '플래그십 시리즈 Z',
-  '얇음과 가벼움의 극한',
-  'UMPC',
-  '비즈니스 프리미엄',
-  'Multi-Media',
-  'ETC'
-]
-
 const PostAll = () => {
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || 'ALL')
   const [selectedTag, setSelectedTag] = useState('전체')
   const [searchKeyword, setSearchKeyword] = useState('')
   const [tags, setTags] = useState(['전체'])
@@ -25,73 +19,84 @@ const PostAll = () => {
   const [fetchError, setFetchError] = useState('')
   const navigate = useNavigate()
 
-  // 페이지네이션 상태
   const [currentPage, setCurrentPage] = useState(1)
-  const itemsPerPage = 3
+  const itemsPerPage = 6
+
+  useEffect(() => {
+    const cat = searchParams.get('category')
+    if (cat) setSelectedCategory(cat)
+  }, [searchParams])
 
   useEffect(() => {
     setFetchError('')
-    const fetchPosts = async () => {
+    const fetchData = async () => {
       try {
-        const response = await getPosts()
-        const rawPosts = Array.isArray(response)
-          ? response
-          : Array.isArray(response?.data) ? response.data : []
-
-        const mappedPosts = (rawPosts || []).map((post) => ({
+        const [response, tagRes] = await Promise.all([getPosts(), getMyTags()])
+        const rawPosts = Array.isArray(response) ? response : Array.isArray(response?.data) ? response.data : []
+        const mappedPosts = rawPosts.map((post) => ({
           id: post.id,
-          category: post.category || 'NOTE BOOK',
+          category: post.category || 'DAILY',
           title: post.title,
           content: post.content,
           tags: post.tags || [],
-          thumbnail: post.imageUrl || ''
+          thumbnail: post.imageUrl || '',
         }))
         setPosts(mappedPosts)
+
+        const tagList = Array.isArray(tagRes) ? tagRes : tagRes?.data ?? []
+        const tagLabels = tagList.map((t) => (typeof t === 'string' ? t : t.label ?? t.name)).filter(Boolean)
+        setTags(['전체', ...tagLabels])
       } catch (error) {
         setFetchError(error?.response?.data?.message || error.message || '게시글 조회 실패')
         setPosts([])
       }
     }
-    fetchPosts()
+    fetchData()
   }, [])
 
-  // 커스텀 훅을 통한 필터링
-  const filteredPosts = useFilteredPosts(posts, selectedTag, searchKeyword)
+  const handleCategoryChange = (value) => {
+    setSelectedCategory(value)
+    setSelectedTag('전체')
+    if (value === 'ALL') setSearchParams({})
+    else setSearchParams({ category: value })
+  }
 
-  // 검색어나 태그가 변경되면 무조건 1페이지로 돌아가도록 초기화
-  useEffect(() => {
-    setCurrentPage(1)
-  }, [selectedTag, searchKeyword])
+  const filteredPosts = posts
+    .filter((post) => selectedCategory === 'ALL' || post.category === selectedCategory)
+    .filter((post) => selectedTag === '전체' || (post.tags || []).some((t) => {
+      const label = typeof t === 'string' ? t : t.label ?? t.name
+      return label === selectedTag
+    }))
+    .filter((post) => {
+      const keyword = searchKeyword.toLowerCase().trim()
+      if (!keyword) return true
+      return (
+        (post.title && post.title.toLowerCase().includes(keyword)) ||
+        (post.content && post.content.toLowerCase().includes(keyword))
+      )
+    })
 
-  // 페이지네이션 계산
+  useEffect(() => { setCurrentPage(1) }, [selectedCategory, selectedTag, searchKeyword])
+
   const totalPages = Math.ceil(filteredPosts.length / itemsPerPage)
-  const startIndex = (currentPage - 1) * itemsPerPage
-  const endIndex = startIndex + itemsPerPage
-  const currentPosts = filteredPosts.slice(startIndex, endIndex)
+  const currentPosts = filteredPosts.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
   const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1)
 
-  // 버그 수정: 다음 페이지로 갈 때는 Math.min을 사용해야 최대 페이지를 넘지 않습니다.
-  const handlePrevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1))
-  const handleNextPage = () => setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-  const handlePageClick = (page) => setCurrentPage(page)
-
-  const handleCreatePost = () => {
-    navigate('/app/posts/new')
-  }
+  const currentCategoryLabel = CATEGORY_FILTER_OPTIONS.find(c => c.value === selectedCategory)?.label || '전체'
 
   return (
     <section className='page post-all'>
       <div className="layout-container">
-        
-        {/* 상단 타이틀 및 액션 영역 */}
         <div className="hero-section">
           <div className="title-area">
             <h2 className="hero-title">전체 게시글 보기</h2>
-            <p className="hero-subtitle">All Posts Directory</p>
+            <p className="hero-subtitle">
+              {selectedCategory === 'ALL' ? 'All Posts Directory' : `카테고리: ${currentCategoryLabel}`}
+            </p>
           </div>
           <div className="action-area">
-            <div className="btn-group" style={{ display: 'flex', gap: '16px' }}>
-              <button className="back-btn" onClick={handleCreatePost}>+ 새 글 작성</button>
+            <div className="btn-group">
+              <button className="back-btn" onClick={() => navigate('/app/posts/new')}>+ 새 글 작성</button>
               <button className="back-btn" onClick={() => navigate(-1)}>← 뒤로가기</button>
             </div>
             <div className="search-wrap">
@@ -104,56 +109,59 @@ const PostAll = () => {
           </div>
         </div>
 
-        {/* 2단 그리드 영역 */}
         <div className="content-grid">
           <aside className="sidebar">
             <h3 className="sidebar-title">Category</h3>
             <ul className="category-list">
-              {CATEGORY_LIST.map((cat, idx) => (
-                <li key={idx} className="category-item">{cat}</li>
+              {CATEGORY_FILTER_OPTIONS.map((cat) => (
+                <li
+                  key={cat.value}
+                  className={`category-item ${selectedCategory === cat.value ? 'active' : ''}`}
+                  onClick={() => handleCategoryChange(cat.value)}
+                >
+                  {cat.label}
+                </li>
               ))}
             </ul>
           </aside>
 
           <main className="main-content">
+            {fetchError && <p className="fetch-error">{fetchError}</p>}
             <div className="tag-section">
               <h4 className="section-title">포스트 태그</h4>
               <TagFilterBar tags={tags} selectedTag={selectedTag} onChangeTag={setSelectedTag} />
             </div>
-            
             <PostList posts={currentPosts} />
 
-            {/* 페이지네이션 UI */}
-            {totalPages > 0 && (
+            {totalPages > 1 && (
               <div className="pagination-wrap">
-                <Button 
-                  onClick={handlePrevPage} 
-                  text="<" 
-                  disabled={currentPage === 1} 
-                  className="page-nav-btn" 
+                <Button
+                  onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                  text="<"
+                  disabled={currentPage === 1}
+                  className="page-nav-btn"
                 />
                 <ul className="page-numbers">
                   {pageNumbers.map((page) => (
-                    <li 
-                      key={page} 
-                      onClick={() => handlePageClick(page)}
+                    <li
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
                       className={currentPage === page ? 'active' : ''}
                     >
                       {page}
                     </li>
                   ))}
                 </ul>
-                <Button 
-                  onClick={handleNextPage} 
-                  text=">" 
-                  disabled={currentPage === totalPages} 
-                  className="page-nav-btn" 
+                <Button
+                  onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+                  text=">"
+                  disabled={currentPage === totalPages}
+                  className="page-nav-btn"
                 />
               </div>
             )}
           </main>
         </div>
-        
       </div>
     </section>
   )

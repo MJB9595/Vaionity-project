@@ -11,19 +11,19 @@ import PostAll from '../pages/posts/PostAll'
 import PostEdit from '../pages/posts/PostEdit'
 import PostCreate from '../pages/posts/PostCreate'
 import PostDetail from '../pages/posts/PostDetail'
-import Setting from '../pages/setting/Setting'
 import Profile from '../pages/profile/Profile'
+import Manage from '../pages/manage/Manage'
+
 export const router = createBrowserRouter([
   {
-    // 공개영역
     element: <PublicLayout />,
     children: [
       { path: '/', element: <Landing /> },
       { path: '/login', element: <Login /> },
-      { path: '/signup', element: <Signup /> }
-    ]
-  }, {
-    // 보호영역
+      { path: '/signup', element: <Signup /> },
+    ],
+  },
+  {
     path: '/app',
     element: (
       <ProtectRoute>
@@ -32,12 +32,12 @@ export const router = createBrowserRouter([
     ),
     children: [
       { index: true, element: <PostDashboard /> },
-      { path:'posts/all', element: <PostAll /> },
-      { path:'posts/new', element: <PostCreate /> },
-      { path:'posts/:id', element: <PostDetail /> },
-      { path:'posts/:id/edit', element: <PostEdit /> },
-      { path:'profile', element: <Profile /> },
-      { path:'setting', element: <Setting /> },
-    ]
-  }
+      { path: 'posts/all', element: <PostAll /> },
+      { path: 'posts/new', element: <PostCreate /> },
+      { path: 'posts/:id', element: <PostDetail /> },
+      { path: 'posts/:id/edit', element: <PostEdit /> },
+      { path: 'profile', element: <Profile /> },
+      { path: 'manage', element: <Manage /> },
+    ],
+  },
 ])

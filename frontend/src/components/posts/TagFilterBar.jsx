@@ -1,16 +1,17 @@
 import React from 'react'
-import PostTag from './PostTag'
 import './PostComponentAll.scss'
-const TagFilterBar = ({ tags }) => {
-  return (
-    <div className='tags'>
-      <span>#tag:</span>
-      {tags.map((tag, i) => (
 
-        <PostTag
+const TagFilterBar = ({ tags, selectedTag, onChangeTag }) => {
+  return (
+    <div className='tag-filter-bar'>
+      {tags.map((tag, i) => (
+        <button
           key={`${tag}-${i}`}
-          tag={tag}
-        />
+          className={`tag-filter-btn ${selectedTag === tag ? 'active' : ''}`}
+          onClick={() => onChangeTag && onChangeTag(tag)}
+        >
+          {tag === '전체' ? '전체' : `#${tag}`}
+        </button>
       ))}
     </div>
   )

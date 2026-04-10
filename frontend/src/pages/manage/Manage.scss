@@ -1,0 +1,226 @@
+@use "@/styles/variables" as *;
+
+.manage-section {
+  background-color: #fafafa;
+  min-height: calc(100vh - 160px);
+}
+
+.manage-inner {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 60px 24px;
+}
+
+.manage-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  margin-top: 32px;
+
+  @media (max-width: 700px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.manage-card {
+  background: #fff;
+  border: 1px solid $gray-200;
+  border-radius: $r-md;
+  padding: 28px 24px;
+
+  .manage-card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+
+    h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #1A0A2E;
+    }
+  }
+
+  .manage-badge {
+    background: #1A0A2E;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: $r-pill;
+  }
+
+  .manage-desc {
+    font-size: 13px;
+    color: $gray-500;
+    margin-bottom: 20px;
+    line-height: 1.6;
+  }
+}
+
+/* ─ 카테고리 목록 ─ */
+.category-manage-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0;
+
+  .category-manage-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border: 1px solid $gray-200;
+    border-radius: $r-xs;
+    cursor: pointer;
+    transition: all 0.15s;
+
+    &:hover {
+      border-color: #1A0A2E;
+      background: #f8f4ff;
+    }
+
+    &.selected {
+      border-color: $purple;
+      background: #f8f4ff;
+    }
+
+    .cat-label {
+      font-size: 15px;
+      font-weight: 500;
+      color: #222;
+    }
+
+    .cat-value {
+      font-size: 12px;
+      color: $gray-400;
+      font-family: monospace;
+    }
+  }
+}
+
+.category-info-box {
+  margin-top: 16px;
+  padding: 14px 16px;
+  background: #f8f4ff;
+  border: 1px solid $purple-3;
+  border-radius: $r-xs;
+
+  p {
+    font-size: 14px;
+    color: #333;
+    margin: 0 0 6px;
+    &:last-of-type { margin-bottom: 0; }
+  }
+
+  .info-sub {
+    font-size: 12px;
+    color: $gray-400;
+    margin-bottom: 12px !important;
+  }
+
+  .go-filter-btn {
+    margin-top: 10px;
+    background: #1A0A2E;
+    color: #fff;
+    border: none;
+    border-radius: $r-xs;
+    padding: 8px 16px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    &:hover { opacity: 0.85; }
+  }
+}
+
+/* ─ 태그 추가 ─ */
+.tag-add-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+
+  .tag-add-input {
+    flex: 1;
+    border: 1px solid $gray-300;
+    border-radius: $r-xs;
+    padding: 10px 14px;
+    font-size: 14px;
+    outline: none;
+    color: #222;
+    transition: border-color 0.15s;
+
+    &:focus { border-color: #1A0A2E; }
+    &:disabled { background: $gray-100; }
+  }
+
+  .tag-add-btn {
+    background: #1A0A2E;
+    color: #fff;
+    border: none;
+    border-radius: $r-xs;
+    padding: 10px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: opacity 0.2s;
+
+    &:disabled { opacity: 0.5; cursor: not-allowed; }
+    &:not(:disabled):hover { opacity: 0.85; }
+  }
+}
+
+/* ─ 태그 목록 ─ */
+.tag-manage-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+
+  .tag-manage-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    .tag-chip {
+      background: $purple-3;
+      color: $purple-2;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 5px 12px;
+      border-radius: $r-pill;
+    }
+
+    .tag-delete-btn {
+      background: none;
+      border: none;
+      color: $gray-400;
+      font-size: 12px;
+      cursor: pointer;
+      padding: 2px 4px;
+      border-radius: 50%;
+      transition: all 0.15s;
+
+      &:hover {
+        color: $error;
+        background: #fff0f0;
+      }
+    }
+  }
+}
+
+.manage-error {
+  color: $error;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+.manage-loading,
+.manage-empty {
+  font-size: 14px;
+  color: $gray-400;
+  text-align: center;
+  padding: 20px 0;
+}

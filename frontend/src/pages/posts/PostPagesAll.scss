@@ -215,3 +215,66 @@
     }
   }
 }
+/* ─── 카테고리 활성 상태 ─── */
+.category-item {
+  &.active {
+    font-weight: bold;
+    color: #1A0A2E !important;
+    position: relative;
+
+    &::before {
+      content: '▶';
+      position: absolute;
+      left: -16px;
+      font-size: 10px;
+      color: $purple;
+    }
+  }
+}
+
+/* ─── TagFilterBar 버튼 스타일 ─── */
+.tag-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+
+  .tag-filter-btn {
+    background: $gray-100;
+    color: $gray-600;
+    border: 1px solid $gray-200;
+    border-radius: $r-pill;
+    padding: 5px 14px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.15s;
+
+    &:hover {
+      border-color: #1A0A2E;
+      color: #1A0A2E;
+    }
+
+    &.active {
+      background: #1A0A2E;
+      color: #fff;
+      border-color: #1A0A2E;
+    }
+  }
+}
+
+/* ─── fetch error ─── */
+.fetch-error {
+  color: #d32f2f;
+  font-size: 14px;
+  padding: 10px 14px;
+  background: #fff5f5;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+/* ─── btn-group flex 보정 ─── */
+.btn-group {
+  display: flex;
+  gap: 16px;
+}
