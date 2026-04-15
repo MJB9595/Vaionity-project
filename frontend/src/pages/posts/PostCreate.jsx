@@ -84,7 +84,7 @@ const PostCreate = () => {
     if (!file) return
     try {
       const presigned = await uploadImage(file)
-      setImageUrl(presigned.fileName)
+      setImageUrl(presigned.fileUrl ?? presigned.fileKey ?? null) 
     } catch (error) {
       console.error('이미지 업로드 실패', error)
     } finally {
@@ -119,7 +119,7 @@ const PostCreate = () => {
               <label className='post-label'>카테고리</label>
               <div className="post-input-wrap">
                 <select value={category} onChange={(e) => setCategory(e.target.value)}>
-                  {categories.map((opt) => (
+                  {Array.isArray(categories) && categories.map((opt) => (
                     <option value={opt.value} key={opt.value}>{opt.label}</option>
                   ))}
                 </select>

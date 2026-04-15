@@ -3,6 +3,8 @@ services:
     image: mysql:8.0
     container_name: vaionity-mysql
     restart: unless-stopped
+    networks:
+      - vaionity-net
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE:-cruddb}
@@ -21,9 +23,11 @@ services:
       start_period: 30s
 
   backend:
-    image:  ${DOCKERHUB_USER}/vaionity-backend:${BACKEND_TAG:-1.0.0}
+    image: ${DOCKERHUB_USER}/vaionity-backend:${BACKEND_TAG:-1.0.0}
     container_name: vaionity-backend
     restart: unless-stopped
+    networks:
+      - vaionity-net
     depends_on:
       mysql:
         condition: service_healthy
@@ -40,9 +44,11 @@ services:
       - "${BACKEND_PORT:-8087}:8080"
 
   frontend:
-    image:  ${DOCKERHUB_USER}/vaionity-frontend:${FRONTEND_TAG:-1.0.0}
+    image: ${DOCKERHUB_USER}/vaionity-frontend:${FRONTEND_TAG:-1.0.0}
     container_name: vaionity-frontend
     restart: unless-stopped
+    networks:
+      - vaionity-net
     depends_on:
       - backend
     ports:
@@ -50,3 +56,7 @@ services:
 
 volumes:
   mysql_data:
+
+networks:
+  vaionity-net:
+    driver: bridge

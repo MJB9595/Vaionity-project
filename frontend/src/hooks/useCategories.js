@@ -9,11 +9,12 @@ export const useCategories = (includeAll = false) => {
 
   useEffect(() => {
     getCategories()
-      .then((data) => {
-        setCategories(includeAll ? [{ id: null, value: 'ALL', label: '전체' }, ...data] : data)
-      })
-      .catch(console.error)
-      .finally(() => setLoading(false))
+    .then((data) => {
+      const list = Array.isArray(data) ? data : []  // ← 안전 장치 추가
+      setCategories(includeAll ? [{ id: null, value: 'ALL', label: '전체' }, ...list] : list)
+    })
+    .catch(console.error)
+    .finally(() => setLoading(false))
   }, [])
 
   return { categories, setCategories, loading }

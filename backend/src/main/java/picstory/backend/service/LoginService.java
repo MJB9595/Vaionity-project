@@ -48,7 +48,17 @@ public class LoginService {
 
         return MemberResponse.from(member);
     }
-    
+
+        private static Long readMemberId(HttpSession session) {
+        Object raw = session.getAttribute(LOGIN_MEMBER_ID);
+        if (raw == null) {
+            return null;
+        }
+        if (raw instanceof Number n) {
+            return n.longValue();
+        }
+        return null;
+    }
 
     @Transactional
     public MemberResponse updateMe(HttpSession session, UpdateProfileRequest request){

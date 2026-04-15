@@ -26,7 +26,7 @@ const Manage = () => {
     try {
       setCatLoading(true)
       const data = await getCategories()
-      setCategories(data)
+      setCategories(Array.isArray(data) ? data : [])
     } catch (e) {
       alert('카테고리를 불러오지 못했습니다.')
     } finally {
