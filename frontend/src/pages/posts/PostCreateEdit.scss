@@ -1,11 +1,16 @@
 @use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
 
 .post-create,
 .post-edit {
     max-width: 1080px; 
     margin: 0 auto;
-    padding: 0 0 40px 0; // 상단 여백 제거 (layout-container에서 처리)
+    padding: 0 0 40px 0;
     color: #111;
+
+    @include mobile {
+        padding: 0 16px 40px 16px;
+    }
 
     .post-form {
         display: flex;
@@ -15,6 +20,10 @@
         padding: 40px;
         border-radius: 12px;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04); 
+
+        @include mobile {
+            padding: 20px;
+        }
 
         .post-card {
             display: flex;
@@ -55,15 +64,17 @@
                             background-color: #fff;
                         }
                         
-                        &::placeholder {
-                            color: #aaa;
-                        }
+                        &::placeholder { color: #aaa; }
                     }
 
                     .post-textarea {
                         min-height: 300px;
                         resize: vertical;
                         line-height: 1.6;
+                        
+                        @include mobile {
+                            min-height: 200px;
+                        }
                     }
                 }
             }
@@ -75,7 +86,6 @@
                     flex-wrap: wrap;
                     gap: 8px;
 
-                    // 외부 컴포넌트인 PostTag가 어두울 경우를 대비한 강제 덮어쓰기
                     .post-tag {
                         background-color: #f0f0f0 !important;
                         color: #333 !important;
@@ -95,10 +105,6 @@
                         &:focus {
                             outline: none;
                             border-color: $purple;
-                        }
-
-                        &::placeholder {
-                            color: #aaa;
                         }
                     }
 
@@ -126,6 +132,10 @@
                 background-color: #fafafa;
                 transition: all 0.2s;
 
+                @include mobile {
+                    padding: 20px;
+                }
+
                 &:hover {
                     border-color: $purple;
                     background-color: rgba(131, 56, 236, 0.03); 
@@ -139,9 +149,7 @@
                     gap: 12px;
                     cursor: pointer;
 
-                    .post-uppload-input {
-                        display: none;
-                    }
+                    .post-uppload-input { display: none; }
 
                     .post-upload-preview {
                         width: 100%;
@@ -154,7 +162,6 @@
                         width: 48px;
                         height: 48px;
                         opacity: 0.4;
-                        filter: none; 
                     }
 
                     .post-upload-title {
@@ -177,6 +184,10 @@
                 margin-top: 24px;
                 padding-top: 24px;
                 border-top: 1px solid #eaeaea;
+
+                @include mobile {
+                    flex-direction: column-reverse;
+                }
                 
                 button {
                     min-width: 100px;
@@ -187,11 +198,14 @@
                     cursor: pointer;
                     transition: all 0.2s;
                     
+                    @include mobile {
+                        width: 100%;
+                    }
+
                     &.btn-cancel {
                         background-color: #fff;
                         color: #333;
                         border: 1px solid #ccc;
-                        
                         &:hover { background-color: #f5f5f5; }
                     }
                     
@@ -199,7 +213,6 @@
                         background-color: $purple;
                         color: #fff;
                         border: none;
-                        
                         &:hover { background-color: darken($purple, 10%); }
                     }
                 }

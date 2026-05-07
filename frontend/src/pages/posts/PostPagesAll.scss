@@ -1,7 +1,8 @@
 @use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
 
 .page {
-  background-color: #FAFAFA; /* 전체 배경 약간 회색 (시안 느낌) */
+  background-color: #FAFAFA;
   min-height: calc(100vh - 160px);
 }
 
@@ -10,7 +11,11 @@
   margin: 0 auto;
   padding: 60px 24px;
 
-  /* 상단 히어로 영역 (타이틀 및 우측 버튼/검색) */
+  @include mobile {
+    padding: 30px 16px;
+  }
+
+  /* 상단 히어로 영역 */
   .hero-section {
     display: flex;
     justify-content: space-between;
@@ -19,16 +24,30 @@
     padding-bottom: 40px;
     margin-bottom: 40px;
 
+    @include mobile {
+      flex-direction: column;
+      gap: 20px;
+      padding-bottom: 24px;
+      margin-bottom: 24px;
+    }
+
     .title-area {
       .hero-title {
         font-size: 42px;
         font-weight: 800;
         margin-bottom: 8px;
         color: #111;
+        
+        @include mobile {
+          font-size: 28px;
+        }
       }
       .hero-subtitle {
         font-size: 16px;
         color: #888;
+        @include mobile {
+          font-size: 14px;
+        }
       }
     }
 
@@ -37,6 +56,11 @@
       flex-direction: column;
       align-items: flex-end;
       gap: 16px;
+
+      @include mobile {
+        align-items: flex-start;
+        width: 100%;
+      }
 
       .back-btn {
         background: none;
@@ -49,6 +73,9 @@
       }
 
       .search-wrap {
+        @include mobile {
+          width: 100%;
+        }
         input {
           border: 1px solid #ddd;
           border-radius: 20px;
@@ -57,6 +84,10 @@
           outline: none;
           color: $gray-800;
           &:focus { border-color: #1A0A2E; }
+          
+          @include mobile {
+            width: 100%;
+          }
         }
       }
 
@@ -76,9 +107,19 @@
     grid-template-columns: 200px 1fr;
     gap: 60px;
 
+    @include tablet {
+      gap: 30px;
+      grid-template-columns: 160px 1fr;
+    }
+
+    @include mobile {
+      grid-template-columns: 1fr;
+      gap: 30px;
+    }
+
     .sidebar {
       .sidebar-title {
-        color: #0044CC; /* 파란색 Category 텍스트 */
+        color: #0044CC;
         font-size: 16px;
         font-weight: 700;
         margin-bottom: 20px;
@@ -92,58 +133,36 @@
         flex-direction: column;
         gap: 14px;
 
+        @include mobile {
+          flex-direction: row;
+          flex-wrap: wrap;
+          gap: 10px;
+        }
+
         .category-item {
           font-size: 15px;
           color: #333;
           cursor: pointer;
           &:hover { font-weight: bold; }
+          
+          @include mobile {
+            background: #fff;
+            border: 1px solid #ddd;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+          }
         }
       }
     }
 
     .main-content {
       .section-title {
-        color: #0044CC; /* 파란색 포스트 태그 텍스트 */
+        color: #0044CC;
         font-size: 16px;
         font-weight: 700;
         margin-bottom: 16px;
         text-decoration: underline;
-      }
-      
-      /* 디테일 페이지 전용 이미지 & 내용 */
-      .detail-hero-image {
-        width: 100%;
-        border-radius: 16px;
-        overflow: hidden;
-        margin-bottom: 40px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        img {
-          width: 100%;
-          height: auto;
-          display: block;
-        }
-      }
-
-      .detail-body {
-        font-size: 16px;
-        color: #222;
-        p { margin-bottom: 20px; }
-      }
-
-      .detail-admin-actions {
-        margin-top: 60px;
-        display: flex;
-        gap: 16px;
-        justify-content: flex-end;
-        
-        .text-btn {
-          background: none;
-          border: none;
-          cursor: pointer;
-          color: #666;
-          text-decoration: underline;
-          &.text-danger { color: #d32f2f; }
-        }
       }
     }
   }
@@ -153,8 +172,13 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 60px; /* 리스트와 간격 띄우기 */
+  margin-top: 60px;
   gap: 16px;
+
+  @include mobile {
+    margin-top: 40px;
+    gap: 8px;
+  }
 
   .page-nav-btn {
     background-color: #fff;
@@ -206,15 +230,15 @@
         color: #111;
       }
 
-      /* 현재 선택된 페이지 스타일 */
       &.active {
-        background-color: #1A0A2E; /* 메인 테마색 */
+        background-color: #1A0A2E;
         color: #fff;
         font-weight: 700;
       }
     }
   }
 }
+
 /* ─── 카테고리 활성 상태 ─── */
 .category-item {
   &.active {
@@ -222,12 +246,22 @@
     color: #1A0A2E !important;
     position: relative;
 
+    @include mobile {
+      background: #1A0A2E !important;
+      color: #fff !important;
+      border-color: #1A0A2E !important;
+      
+      &::before { display: none; }
+    }
+
     &::before {
       content: '▶';
       position: absolute;
       left: -16px;
       font-size: 10px;
       color: $purple;
+      
+      @include mobile { display: none; }
     }
   }
 }
@@ -262,7 +296,6 @@
   }
 }
 
-/* ─── fetch error ─── */
 .fetch-error {
   color: #d32f2f;
   font-size: 14px;
@@ -273,7 +306,6 @@
   margin-bottom: 16px;
 }
 
-/* ─── btn-group flex 보정 ─── */
 .btn-group {
   display: flex;
   gap: 16px;

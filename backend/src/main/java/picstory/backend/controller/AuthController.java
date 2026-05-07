@@ -23,10 +23,15 @@ public class AuthController {
 
     @GetMapping("/me")
     public ResponseEntity<MemberResponse> memberResponse(HttpSession session) {
-        return loginService.me(session)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
+        try {
+            MemberResponse response = loginService.me(session);
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            // 세션이 없거나 사용자를 찾을 수 없을 때 (LoginService에서 예외 발생 시)
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
+
     @PatchMapping("/me")
     public MemberResponse updateMe(@RequestBody UpdateProfileRequest request, HttpSession session){
         return loginService.updateMe(session,request);

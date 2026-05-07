@@ -1,4 +1,5 @@
 @use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
 
 .auth {
     height: 100vh;
@@ -9,9 +10,9 @@
         justify-content: center;
         align-items: center;
         flex-direction: column;
+        padding: 0 20px;
 
         .auth-box {
-            // flex: 1;
             width: 100%;
 
             nav {
@@ -31,16 +32,35 @@
 
             .auth-btn-wrap {
                 margin-top: $space-lg;
-                display: flex; /* Enable flexbox */
-                justify-content: flex-end; /* Push to the right */
+                display: flex; 
+                justify-content: flex-end; 
                 gap: $space-md;
+
+                @include mobile {
+                    flex-direction: column-reverse;
+                }
+
+                > div {
+                    @include mobile {
+                        width: 100%;
+                    }
+                    a {
+                        width: 100%;
+                        display: block;
+                    }
+                    button {
+                        width: 100%;
+                    }
+                }
 
                 .btn.primary {
                     width: 25%;
+                    @include mobile {
+                        width: 100%;
+                    }
                 }
             }
         }
-
     }
 }
 
@@ -52,4 +72,9 @@
     border-radius: 20px;
     gap: $btn-gap;
     padding: $btn-padding-y $btn-padding-x;
+    
+    @include mobile {
+        margin-right: 0;
+        font-size: 14px;
+    }
 }

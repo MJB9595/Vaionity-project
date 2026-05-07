@@ -1,17 +1,32 @@
 @use "@/styles/variables" as *;
-
+@use "@/styles/mixins" as *;
 
 .profile-section{
     .inner {
         max-width: $container-md;
+        padding: 0 24px;
+        
+        @include mobile {
+            padding: 0 16px;
+        }
+
         main {
             display: flex;
             gap: $space-md;
+            
+            @include mobile {
+                flex-direction: column;
+            }
+
             .left {
                 min-width: $container-xs;
                 display: flex;
                 flex-direction: column;
                 gap: $space-md;
+                
+                @include mobile {
+                    min-width: 100%;
+                }
             }
         }
     }
