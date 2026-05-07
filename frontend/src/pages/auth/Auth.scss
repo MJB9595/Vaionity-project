@@ -2,79 +2,169 @@
 @use "@/styles/mixins" as *;
 
 .auth {
-    height: 100vh;
-    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('/images/bg-vaio.png') no-repeat center center / cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: $space-lg;
+
+    @include mobile {
+        padding: $space-md;
+        align-items: flex-start;
+        padding-top: $space-xl;
+    }
 
     .inner {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        padding: 0 20px;
+        width: 100%;
+        max-width: 480px;
 
         .auth-box {
-            width: 100%;
+            background: $card;
+            border: 1px solid $line;
+            border-radius: $r-lg;
+            padding: $space-xl;
+            backdrop-filter: blur(14px);
+
+            @include mobile {
+                padding: $space-lg;
+            }
 
             nav {
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
+                margin-bottom: $space-lg;
+
+                h2 {
+                    font-size: $text-xl;
+                    font-weight: $fw-bold;
+                    color: $fg;
+                }
             }
         }
+    }
 
-        .auth-form {
-            margin: $space-lg 0;
-            width: 100%;
+    .auth-form {
+        display: flex;
+        flex-direction: column;
+        gap: $space-md;
 
-            .input-group {
-                padding: $space-sm 0;
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: $space-sm;
+            padding: $space-sm 0;
+        }
+
+        .auth-btn-wrap {
+            margin-top: $space-lg;
+            display: flex;
+            justify-content: flex-end;
+            gap: $space-md;
+
+            @include mobile {
+                flex-direction: column-reverse;
             }
 
-            .auth-btn-wrap {
-                margin-top: $space-lg;
-                display: flex; 
-                justify-content: flex-end; 
-                gap: $space-md;
+            > div {
+                @include mobile {
+                    width: 100%;
+                }
+
+                a {
+                    width: 100%;
+                    display: block;
+                }
+
+                button {
+                    width: 100%;
+                }
+            }
+
+            .btn.primary {
+                width: 25%;
 
                 @include mobile {
-                    flex-direction: column-reverse;
-                }
-
-                > div {
-                    @include mobile {
-                        width: 100%;
-                    }
-                    a {
-                        width: 100%;
-                        display: block;
-                    }
-                    button {
-                        width: 100%;
-                    }
-                }
-
-                .btn.primary {
-                    width: 25%;
-                    @include mobile {
-                        width: 100%;
-                    }
+                    width: 100%;
                 }
             }
         }
     }
 }
 
+// ──────────────────────────────
+// ✅ 소셜 로그인 구분선
+// ──────────────────────────────
+.social-divider {
+    display: flex;
+    align-items: center;
+    gap: $space-sm;
+    margin: $space-lg 0 $space-md;
+
+    &::before,
+    &::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: $line;
+    }
+
+    span {
+        font-size: 13px;
+        color: $muted;
+        white-space: nowrap;
+    }
+}
+
+// ──────────────────────────────
+// ✅ 카카오 로그인 버튼
+// ──────────────────────────────
+.kakao-login-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 14px;
+    background-color: #FEE500;
+    color: #000000;
+    border: none;
+    border-radius: $r-lg;
+    font-size: 15px;
+    font-weight: $fw-bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.15s ease;
+    font-family: inherit;
+
+    &:hover {
+        background-color: #F0D900;
+        transform: translateY(-1px);
+    }
+
+    &:active {
+        transform: translateY(0);
+        background-color: #E6CF00;
+    }
+
+    .kakao-icon {
+        width: 20px;
+        height: 20px;
+        flex-shrink: 0;
+    }
+}
+
+// ──────────────────────────────
+// 공통 에러 텍스트
+// ──────────────────────────────
 .error-text {
     display: flex;
     margin-top: $space-sm;
-    margin-right: $space-md;
     border: 1px solid $warning;
     border-radius: 20px;
     gap: $btn-gap;
     padding: $btn-padding-y $btn-padding-x;
-    
+
     @include mobile {
-        margin-right: 0;
         font-size: 14px;
     }
 }
